@@ -92,9 +92,6 @@ public class MainActivity extends AppCompatActivity {
                 addDummyProduct();
                 displayDatabase();
                 return true;
-            case R.id.action_delete_all_products:
-                // Do nothing for now
-                return true;
         }
 
         return super.onOptionsItemSelected(menuItemClicked);

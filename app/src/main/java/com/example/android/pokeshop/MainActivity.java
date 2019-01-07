@@ -1,11 +1,18 @@
 package com.example.android.pokeshop;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
+
+import com.example.android.pokeshop.data.ProductsContract;
+import com.example.android.pokeshop.data.ProductsContract.ProductsEntry;
+import com.example.android.pokeshop.data.ProductsDbHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(openEditorIntent);
             }
         });
+
+        // Print database row count
+        summarizeDb();
     }
 
     /**
@@ -42,5 +52,21 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true; // To add menu to app bar
+    }
+
+    /**
+     * Print database row count.
+     */
+    private void summarizeDb() {
+        ProductsDbHelper productsDbHelper = new ProductsDbHelper(this);
+        SQLiteDatabase productsDb = productsDbHelper.getReadableDatabase();
+        Cursor cursor = productsDb.rawQuery("SELECT * FROM " + ProductsEntry.TABLE_NAME, null);
+
+        try {
+            TextView productsListTextView = findViewById(R.id.products_list_text_view);
+            productsListTextView.setText("Number of rows in products database: " + cursor.getCount());
+        } finally {
+            cursor.close();
+        }
     }
 }

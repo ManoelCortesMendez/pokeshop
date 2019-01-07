@@ -18,9 +18,16 @@ import com.example.android.pokeshop.data.ProductsDbHelper;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Database helper
+    /**
+     * Products database helper.
+     */
     private ProductsDbHelper productsDbHelper;
 
+    /**
+     * Set activity contents.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -31,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         // Open editor on FAB click
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
+
             /**
              * Open editor on FAB click.
              *
@@ -83,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Add dummy
+     * Add dummy product (with predefined data) to the database.
      */
     private void addDummyProduct() {
 
@@ -92,11 +100,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Build row
         ContentValues productContentValues = new ContentValues();
-        productContentValues.put(ProductsEntry.COLUMN_PRODUCT_NAME, "Pokeball");
-        productContentValues.put(ProductsEntry.COLUMN_PRODUCT_PRICE, 1);
-        productContentValues.put(ProductsEntry.COLUMN_PRODUCT_QUANTITY, 2);
-        productContentValues.put(ProductsEntry.COLUMN_PRODUCT_SUPPLIER, "PokeSupplier");
-        productContentValues.put(ProductsEntry.COLUMN_PRODUCT_SUPPLIER_PHONE, "1234");
+        productContentValues.put(ProductsEntry.COLUMN_PRODUCT_NAME, "aProduct");
+        productContentValues.put(ProductsEntry.COLUMN_PRODUCT_PRICE, 100);
+        productContentValues.put(ProductsEntry.COLUMN_PRODUCT_QUANTITY, 200);
+        productContentValues.put(ProductsEntry.COLUMN_PRODUCT_SUPPLIER, "aSupplier");
+        productContentValues.put(ProductsEntry.COLUMN_PRODUCT_SUPPLIER_PHONE, "12345");
 
         // Add row to database
         long newRowId = productsDb.insert(ProductsEntry.TABLE_NAME, null, productContentValues);

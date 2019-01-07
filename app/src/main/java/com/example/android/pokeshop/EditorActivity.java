@@ -82,12 +82,34 @@ public class EditorActivity extends AppCompatActivity {
         // Get writable database
         SQLiteDatabase productsDatabase = productsDbHelper.getWritableDatabase();
 
-        // Get user inputted values
-        String name = nameEditText.getText().toString().trim();
-        int price = Integer.parseInt(priceEditText.getText().toString().trim());
-        int quantity = Integer.parseInt(quantityEditText.getText().toString().trim());
-        String supplier = supplierEditText.getText().toString().trim();
-        String supplierPhone = supplierPhoneEditText.getText().toString().trim();
+        // Declare variables to hold inputs
+        int price;
+        int quantity;
+        String name;
+        String supplier;
+        String supplierPhone;
+
+        // Catch empty inputs
+        try {
+            // Try to parse integer inputs. If empty, automatically throws NumberFormatException.
+            price = Integer.parseInt(priceEditText.getText().toString().trim());
+            quantity = Integer.parseInt(quantityEditText.getText().toString().trim());
+
+            // Get user text inputs
+            name = nameEditText.getText().toString().trim();
+            supplier = supplierEditText.getText().toString().trim();
+            supplierPhone = supplierPhoneEditText.getText().toString().trim();
+
+            // Check if user text inputs are empty, in which case...
+            if (name.isEmpty() | supplier.isEmpty() | supplierPhone.isEmpty()) {
+                // ... throw generic exception
+                throw new RuntimeException();
+            }
+        } catch (Exception exception) {
+            // If any type of exception was thrown, warn the user and return early.
+            Toast.makeText(this, "Error: empty input(s). Complete all fields!", Toast.LENGTH_SHORT).show();
+            return; // Early
+        }
 
         // Build row
         ContentValues productContentValues = new ContentValues();

@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 // Do nothing for now
                 return true;
         }
+
         return super.onOptionsItemSelected(menuItemClicked);
     }
 

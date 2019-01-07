@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".EditorActivity"
-            android:label="Editor"></activity>
+            android:label="Editor"
+            android:parentActivityName=".MainActivity"></activity>
     </application>
 
 </manifest>

@@ -1,12 +1,15 @@
 package com.example.android.pokeshop;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -15,6 +18,9 @@ import com.example.android.pokeshop.data.ProductsContract.ProductsEntry;
 import com.example.android.pokeshop.data.ProductsDbHelper;
 
 public class MainActivity extends AppCompatActivity {
+
+    // Database helper
+    private ProductsDbHelper productsDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Instantiate database helper
+        productsDbHelper = new ProductsDbHelper(this);
+
         // Print database row count
         summarizeDb();
     }
@@ -52,6 +61,45 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true; // To add menu to app bar
+    }
+
+    /**
+     * Respond to menu item click.
+     *
+     * @param menuItemClicked Menu item clicked.
+     * @return true to consume event here. (Otherwise, pass up the chain using 'super'.)
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItemClicked) {
+        switch (menuItemClicked.getItemId()) {
+            case R.id.action_add_dummy_pokemon:
+                addDummyPokemon();
+                summarizeDb();
+                return true;
+            case R.id.action_delete_all_pokemon:
+                // Do nothing for now
+                return true;
+        }
+        return super.onOptionsItemSelected(menuItemClicked);
+    }
+
+    private void addDummyPokemon() {
+
+        // Get database in write mode
+        SQLiteDatabase productsDb = productsDbHelper.getWritableDatabase();
+
+        // Build row
+        ContentValues productContentValues = new ContentValues();
+        productContentValues.put(ProductsEntry.COLUMN_PRODUCT_NAME, "Pokeball");
+        productContentValues.put(ProductsEntry.COLUMN_PRODUCT_PRICE, 1);
+        productContentValues.put(ProductsEntry.COLUMN_PRODUCT_QUANTITY, 2);
+        productContentValues.put(ProductsEntry.COLUMN_PRODUCT_SUPPLIER, "PokeSupplier");
+        productContentValues.put(ProductsEntry.COLUMN_PRODUCT_SUPPLIER_PHONE, "1234");
+
+        // Add row to database
+        long newRowId = productsDb.insert(ProductsEntry.TABLE_NAME, null, productContentValues);
+
+        Log.e("MainActivity", "New row id: " + newRowId);
     }
 
     /**

@@ -59,6 +59,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Display database on each activity start -- e.g. when returning from editor.
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        displayDatabase();
+    }
+
+    /**
      * Inflate options menu.
      *
      * @param menu Activity's menu.

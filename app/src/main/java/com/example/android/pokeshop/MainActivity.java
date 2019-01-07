@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.android.pokeshop.data.ProductsContract;
 import com.example.android.pokeshop.data.ProductsContract.ProductsEntry;
 import com.example.android.pokeshop.data.ProductsDbHelper;
 
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         productsDbHelper = new ProductsDbHelper(this);
 
         // Print database row count
-        summarizeDb();
+        displayDatabase();
     }
 
     /**
@@ -72,20 +71,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItemClicked) {
         switch (menuItemClicked.getItemId()) {
-            case R.id.action_add_dummy_pokemon:
-                addDummyPokemon();
-                summarizeDb();
+            case R.id.action_add_dummy_product:
+                addDummyProduct();
+                displayDatabase();
                 return true;
-            case R.id.action_delete_all_pokemon:
+            case R.id.action_delete_all_products:
                 // Do nothing for now
                 return true;
         }
         return super.onOptionsItemSelected(menuItemClicked);
     }
 
-    private void addDummyPokemon() {
+    /**
+     * Add dummy
+     */
+    private void addDummyProduct() {
 
-        // Get database in write mode
+        // Open writable database
         SQLiteDatabase productsDb = productsDbHelper.getWritableDatabase();
 
         // Build row
@@ -99,22 +101,85 @@ public class MainActivity extends AppCompatActivity {
         // Add row to database
         long newRowId = productsDb.insert(ProductsEntry.TABLE_NAME, null, productContentValues);
 
-        Log.e("MainActivity", "New row id: " + newRowId);
+        Log.e("MainActivity", "New row ID: " + newRowId);
     }
 
     /**
-     * Print database row count.
+     * Display products database.
      */
-    private void summarizeDb() {
-        ProductsDbHelper productsDbHelper = new ProductsDbHelper(this);
+    private void displayDatabase() {
+
+        // Open readable database
         SQLiteDatabase productsDb = productsDbHelper.getReadableDatabase();
-        Cursor cursor = productsDb.rawQuery("SELECT * FROM " + ProductsEntry.TABLE_NAME, null);
+
+        // Build projection (list of columns we're interested in)
+        String[] projection = {
+                ProductsEntry._ID,
+                ProductsEntry.COLUMN_PRODUCT_NAME,
+                ProductsEntry.COLUMN_PRODUCT_PRICE,
+                ProductsEntry.COLUMN_PRODUCT_QUANTITY,
+                ProductsEntry.COLUMN_PRODUCT_SUPPLIER,
+                ProductsEntry.COLUMN_PRODUCT_SUPPLIER_PHONE
+        };
+
+        // Query database. Data is returned as a cursor.
+        Cursor cursor = productsDb.query(
+                ProductsEntry.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
 
         try {
+
+            // Get products list view
             TextView productsListTextView = findViewById(R.id.products_list_text_view);
-            productsListTextView.setText("Number of rows in products database: " + cursor.getCount());
+
+            // Display database row count
+            productsListTextView.setText("Number of rows in products database: " + cursor.getCount() + "\n\n");
+
+            // Display database headers
+            productsListTextView.append(
+                    ProductsEntry._ID + " --- " +
+                    ProductsEntry.COLUMN_PRODUCT_NAME + " --- " +
+                    ProductsEntry.COLUMN_PRODUCT_PRICE + " --- " +
+                    ProductsEntry.COLUMN_PRODUCT_QUANTITY + " --- " +
+                    ProductsEntry.COLUMN_PRODUCT_SUPPLIER + " --- " +
+                    ProductsEntry.COLUMN_PRODUCT_SUPPLIER_PHONE + "\n");
+
+            // Get column indices
+            int idColumnIndex = cursor.getColumnIndex(ProductsEntry._ID);
+            int nameColumnIndex = cursor.getColumnIndex(ProductsEntry.COLUMN_PRODUCT_NAME);
+            int priceColumnIndex = cursor.getColumnIndex(ProductsEntry.COLUMN_PRODUCT_PRICE);
+            int quantityColumnIndex = cursor.getColumnIndex(ProductsEntry.COLUMN_PRODUCT_QUANTITY);
+            int supplierColumnIndex = cursor.getColumnIndex(ProductsEntry.COLUMN_PRODUCT_SUPPLIER);
+            int supplierPhoneColumnIndex = cursor.getColumnIndex(ProductsEntry.COLUMN_PRODUCT_SUPPLIER_PHONE);
+
+            // Loop over cursor rows
+            while (cursor.moveToNext()) {
+
+                // Get value of each field in current row
+                int currentId = cursor.getInt(idColumnIndex);
+                String currentName = cursor.getString(nameColumnIndex);
+                int currentPrice = cursor.getInt(priceColumnIndex);
+                int currentQuantity = cursor.getInt(quantityColumnIndex);
+                String currentSupplier = cursor.getString(supplierColumnIndex);
+                String currentSupplierPhone = cursor.getString(supplierPhoneColumnIndex);
+
+                // Display row
+                productsListTextView.append("\n" +
+                        currentId + " --- " +
+                        currentName + " --- " +
+                        currentPrice + " --- " +
+                        currentQuantity + " --- " +
+                        currentSupplier + " --- " +
+                        currentSupplierPhone);
+            }
         } finally {
-            cursor.close();
+            cursor.close(); // To avoid memory leaks
         }
     }
 }

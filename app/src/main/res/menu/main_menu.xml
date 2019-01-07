@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="Add dummy Pokemon"
-        android:id="@+id/action_add_dummy_pokemon" />
-    <item android:title="Delete all Pokemon"
-        android:id="@+id/action_delete_all_pokemon" />
+    <item android:title="Add dummy product"
+        android:id="@+id/action_add_dummy_product" />
+    <item android:title="Delete all products"
+        android:id="@+id/action_delete_all_products" />
 </menu>
